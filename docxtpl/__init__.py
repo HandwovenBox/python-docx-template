@@ -45,6 +45,10 @@ class DocxTemplate(object):
             fh.write(self.get_xml())
 
     def patch_xml(self,src_xml):
+        #remove all “curly” quotes (single and double) found within {% %} and replace with straight
+        def stripquotes(m):
+            return re.sub(r'[“”‘’]+','\"',m.group(0),flags=re.DOTALL)
+        src_xml = re.sub(r'(?<=\{\%).*?(?=\%\})',stripquotes,src_xml,flags=re.DOTALL)
         # strip all xml tags inside {% %} and {{ }} that MS word can insert into xml source
         src_xml = re.sub(r'(?<={)(<[^>]*>)+(?=[\{%])|(?<=[%\}])(<[^>]*>)+(?=\})','',src_xml,flags=re.DOTALL)
         def striptags(m):
