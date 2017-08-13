@@ -49,7 +49,16 @@ class DocxTemplate(object):
         # output a list of all variable/fields in the template
         xml = self.get_xml()
         xml = self.patch_xml(xml)
-        return infer(xml)
+        #Now add the header/footer sections
+        # Headers
+        headerxml = ""
+        for relKey, hxml in self.get_headers_footers_xml(self.HEADER_URI):
+            headerxml = headerxml + self.patch_xml(hxml)
+        footerxml = ""
+        # Footers        
+        for relKey, fxml in self.get_headers_footers_xml(self.FOOTER_URI):
+            footerxml = footerxml + self.patch_xml(fxml)
+        return(infer(headerxml + xml + footerxml))
             
     def patch_xml(self,src_xml):
         #remove all “curly” quotes (single and double) found within {% %} and replace with straight
